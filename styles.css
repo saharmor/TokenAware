@@ -1,0 +1,8 @@
+.tokens-div {
+    margin-left: 10px;
+}
+
+.exceeded-prompts-error-msg{
+    margin-left: 10px;
+    color: red;
+}
