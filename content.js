@@ -1,17 +1,12 @@
-const enginesCreditsMapping = {'davinci': 1, 'curie': 10, 'babbage': 50, 'ada': 75};
-const maxTokenSize = 2048;
-
 function roundNum(num) {
   return Math.round((num + Number.EPSILON) * 100) / 100
 }
 
-function runOnChange() {
-  // check if page is ready
+function checkIfPageLoaded() {
   if (!$('.slider-container')[0]) {
-    return;
+    return false;
   }
-
-  countWords();
+  return true;
 }
 
 function countWords() {
@@ -53,29 +48,39 @@ function checkMaxTokensError(promptTokensSize) {
 }
 
 if (document.readyState !== 'complete') {
-  window.addEventListener('load', registerEditorListener);
+  window.addEventListener('load', registerWhenPageLoad);
 } else {
-  registerEditorListener();
+  registerWhenPageLoad();
 }
 
-function registerEditorListener() {
+function registerEditorListeners() {
+  $('div[data-contents=true]').on('DOMSubtreeModified paste', function () {
+    countWords();
+  });
+
+  $('.slider-container').on('DOMSubtreeModified', function () {
+    countWords();
+  });
+
+  $('.engine-select').find('[class$="singleValue"]').on('DOMSubtreeModified', function () {
+    countWords();
+  });
+
+  $('.app-select-container').find('[class$="singleValue"]').on('DOMSubtreeModified', function () {
+    countWords();
+  });
+
+  countWords();
+}
+
+function registerWhenPageLoad() {
   setTimeout(function () {
-    $('div[data-contents=true]').on('DOMSubtreeModified paste', function () {
-      runOnChange();
-    });
-
-    $('.engine-select').find('[class$="singleValue"]').on('DOMSubtreeModified', function () {
-      runOnChange();
-    });
-
-    $('.app-select-container').find('[class$="singleValue"]').on('DOMSubtreeModified', function () {
-      runOnChange();
-    });
-
-    $('.slider-container').on('DOMSubtreeModified', function () {
-      runOnChange();
-    });
-
-    runOnChange();
-  }, 5000);
+    if (!checkIfPageLoaded()) {
+      setTimeout(function () {
+        registerWhenPageLoad();
+      }, pageLoadWaitIntervals);
+      return;
+    }
+    registerEditorListeners();
+  }, pageLoadWaitIntervals);
 }

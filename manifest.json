@@ -4,29 +4,35 @@
   "description": "Dynamically count tokens and visualize your spend in OpenAI's Playground. 100% client side and secure. For feedback: saharmor.info",
   "version": "1.0.1",
   "browser_action": {
-    "default_icon": "icon/favicon.ico",
-    "default_popup": "popup.html"
+    "default_icon": "icon/favicon.ico"
   },
   "icons": {
     "16": "icon/favicon-16x16.png",
     "48": "icon/favicon-32x32.png"
   },
-  "permissions": [
-    "activeTab"
-  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
   "content_scripts": [
     {
-      "run_at": "document_end",
       "matches": [
-        "*://*.beta.openai.com/playground*"
+        "*://*.beta.openai.com/*"
       ],
       "js": [
         "jquery-2.2.js",
+        "consts.js",
         "content.js"
       ],
       "css": [
         "styles.css"
       ]
     }
+  ],
+  "permissions": [
+    "*://*.beta.openai.com/*",
+    "webNavigation",
+    "tabs"
   ]
 }
