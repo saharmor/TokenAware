@@ -10,8 +10,8 @@ function checkIfPageLoaded() {
 }
 
 function countWords() {
-  const responseLen = Number($('.slider-container')[0].children[0].children[1].textContent.trim());
-  const bestOf = $('.slider-container')[5].children[0].children[1].textContent.trim();
+  const responseLen = Number($('.slider-container .text-input')[0]["value"].trim());
+  const bestOf = Number($('.slider-container .text-input')[5]["value"].trim());
   const engine = $('.engine-select').find('[class$="singleValue"]')[0].textContent;
   const engineFactor = enginesCreditsMapping[engine];
 
@@ -58,15 +58,19 @@ function registerEditorListeners() {
     countWords();
   });
 
-  $('.slider-container').on('DOMSubtreeModified', function () {
-    countWords();
-  });
-
   $('.engine-select').find('[class$="singleValue"]').on('DOMSubtreeModified', function () {
     countWords();
   });
 
   $('.app-select-container').find('[class$="singleValue"]').on('DOMSubtreeModified', function () {
+    countWords();
+  });
+
+  $('.slider-container').on('DOMSubtreeModified input change paste propertychange', function () {
+    countWords();
+  });
+
+  $('.rc-slider').on('click mousedown mousemove', function () {
     countWords();
   });
 

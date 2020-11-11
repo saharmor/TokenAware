@@ -32,7 +32,6 @@
   ],
   "permissions": [
     "*://*.beta.openai.com/*",
-    "webNavigation",
-    "tabs"
+    "webNavigation"
   ]
 }
