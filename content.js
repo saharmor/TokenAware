@@ -20,9 +20,16 @@ function countWords() {
     promptTokensSize += $(this).text().length / 4;
   });
 
-  const completionSize = (responseLen * bestOf);
-  const billedCreditsTotal = roundNum((promptTokensSize / engineFactor) + (completionSize / engineFactor));
-  const billedCreditsStrBreakdown = `${roundNum(promptTokensSize / engineFactor)} prompt + ${roundNum(completionSize / engineFactor)} completion`;
+  // content-filter currently doesn't count against tokens quota
+  let promptsBilled = 0;
+  let completionBilled = 0;
+  if (engine !== 'content-filter-alpha-c4') {
+    const completionSize = (responseLen * bestOf);
+    promptsBilled = roundNum(promptTokensSize / engineFactor);
+    completionBilled = roundNum(completionSize / engineFactor);
+  }
+  const billedCreditsTotal = roundNum(promptsBilled + completionBilled);
+  const billedCreditsStrBreakdown = `${promptsBilled} prompt + ${completionBilled} completion`;
   const billedCreditsElement = `<div class="tokens-div"> Billed credits: <u>${Math.ceil(billedCreditsTotal)}</u> (${billedCreditsStrBreakdown})</div>`
   if ($('.tokens-div').length) {
     $('.tokens-div').replaceWith(billedCreditsElement);
