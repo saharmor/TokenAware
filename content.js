@@ -14,6 +14,7 @@ function countWords() {
   const bestOf = Number($('.slider-container .text-input')[5]["value"].trim());
   const engine = $('.engine-select').find('[class$="singleValue"]')[0].textContent;
   const engineFactor = enginesCreditsMapping[engine];
+  const tokenCosts = engineFactor / 1000;
 
   let promptTokensSize = 0;
   $('span[data-text=true]').each(function () {
@@ -25,16 +26,16 @@ function countWords() {
   let completionBilled = 0;
   if (engine !== 'content-filter-alpha-c4') {
     const completionSize = (responseLen * bestOf);
-    promptsBilled = roundNum(promptTokensSize / engineFactor);
-    completionBilled = roundNum(completionSize / engineFactor);
+    promptsBilled = parseFloat((promptTokensSize * tokenCosts).toFixed(5));
+    completionBilled = parseFloat((completionSize * tokenCosts).toFixed(5));
   }
-  const billedCreditsTotal = roundNum(promptsBilled + completionBilled);
-  const billedCreditsStrBreakdown = `${promptsBilled} prompt + ${completionBilled} completion`;
-  const billedCreditsElement = `<div class="tokens-div"> Billed credits: <u>${Math.ceil(billedCreditsTotal)}</u> (${billedCreditsStrBreakdown})</div>`
+  const usageCosts = roundNum(promptsBilled + completionBilled);
+  const usageCostsStrBreakdown = `${promptsBilled} prompt + ${completionBilled} completion`;
+  const usageCostsElement = `<div class="tokens-div">Usage costs: <u>$${parseFloat((usageCosts).toFixed(2))}</u> (${usageCostsStrBreakdown})</div>`
   if ($('.tokens-div').length) {
-    $('.tokens-div').replaceWith(billedCreditsElement);
+    $('.tokens-div').replaceWith(usageCostsElement);
   } else {
-    $('.pg-header-section.pg-header-title').append(billedCreditsElement);
+    $('.pg-header-section.pg-header-title').append(usageCostsElement);
   }
 
   checkMaxTokensError(promptTokensSize + responseLen);
