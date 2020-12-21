@@ -10,7 +10,7 @@ The token calculation is an estimate, based on the assumption that 1 token equal
 3. Click `Load unpacked` at the top-left corner
 4. Choose the directory from step 1
 5. Navigate to the [Playground environment](https://beta.openai.com/playground) (log in if needed)
-6. You should now see the 'Billed credits' text next to the *_Playground_* title 
+6. You should now see the 'Usage costs' text next to the *_Playground_* title 
 
 ## Future
 Consider using [Hugging Face's GPT-2 Output Detector](https://huggingface.co/openai-detector) as a workaround for a more precise token count by querying and then selecting the `used_tokens` variable. 
