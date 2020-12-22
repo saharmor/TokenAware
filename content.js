@@ -26,12 +26,17 @@ function countWords() {
   let completionBilled = 0;
   if (engine !== 'content-filter-alpha-c4') {
     const completionSize = (responseLen * bestOf);
-    promptsBilled = parseFloat((promptTokensSize * tokenCosts).toFixed(5));
-    completionBilled = parseFloat((completionSize * tokenCosts).toFixed(5));
+    promptsBilled = parseFloat((promptTokensSize * tokenCosts).toFixed(3));
+    completionBilled = parseFloat((completionSize * tokenCosts).toFixed(3));
   }
-  const usageCosts = roundNum(promptsBilled + completionBilled);
+  let usageCosts = promptsBilled + completionBilled;
+  if (usageCosts<0.01){
+    usageCosts = "<0.01";
+  } else {
+    usageCosts = parseFloat((usageCosts).toFixed(2));
+  }
   const usageCostsStrBreakdown = `${promptsBilled} prompt + ${completionBilled} completion`;
-  const usageCostsElement = `<div class="tokens-div">Usage costs: <u>$${parseFloat((usageCosts).toFixed(2))}</u> (${usageCostsStrBreakdown})</div>`
+  const usageCostsElement = `<div class="tokens-div">Usage costs: <u>$${usageCosts}</u> (${usageCostsStrBreakdown})</div>`
   if ($('.tokens-div').length) {
     $('.tokens-div').replaceWith(usageCostsElement);
   } else {
