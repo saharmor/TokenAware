@@ -1,19 +1,24 @@
-function roundNum(num) {
-  return Math.round((num + Number.EPSILON) * 100) / 100
-}
-
 function checkIfPageLoaded() {
-  if (!$('.slider-container')[0]) {
-    return false;
-  }
-  return true;
+  return $('.slider-container')[0];
 }
 
-function countWords() {
+function isKnownEngine(engineName) {
+  return (Object.keys(enginesCreditsMapping).includes(engineName) || freeEngines.includes(engineName));
+}
+
+function changeContent(content) {
+  const wrappedContent = `<div class="tokens-div">${content}</div>`
+  if ($('.tokens-div').length) {
+    $('.tokens-div').replaceWith(wrappedContent);
+  } else {
+    $('.pg-header-section.pg-header-title').append(wrappedContent);
+  }
+}
+
+function updateTokensUsage(engineName) {
   const responseLen = Number($('.slider-container .text-input')[0]["value"].trim());
   const bestOf = Number($('.slider-container .text-input')[5]["value"].trim());
-  const engine = $('.engine-select').find('[class$="singleValue"]')[0].textContent;
-  const engineFactor = enginesCreditsMapping[engine];
+  const engineFactor = enginesCreditsMapping[engineName];
   const tokenCosts = engineFactor / 1000;
 
   let promptTokensSize = 0;
@@ -21,32 +26,35 @@ function countWords() {
     promptTokensSize += $(this).text().length / 4;
   });
 
-  // content-filter currently doesn't count against tokens quota
-  let promptsBilled = 0;
-  let completionBilled = 0;
-  if (engine !== 'content-filter-alpha-c4') {
-    const completionSize = (responseLen * bestOf);
-    promptsBilled = parseFloat((promptTokensSize * tokenCosts).toFixed(3));
-    completionBilled = parseFloat((completionSize * tokenCosts).toFixed(3));
-  }
+  const completionSize = (responseLen * bestOf);
+  const promptsBilled = parseFloat((promptTokensSize * tokenCosts).toFixed(3));
+  const completionBilled = parseFloat((completionSize * tokenCosts).toFixed(3));
   let usageCosts = promptsBilled + completionBilled;
-  if (usageCosts<0.01){
+  if (usageCosts < 0.01) {
     usageCosts = "<0.01";
   } else {
     usageCosts = parseFloat((usageCosts).toFixed(2));
   }
   const usageCostsStrBreakdown = `${promptsBilled} prompt + ${completionBilled} completion`;
-  const usageCostsElement = `<div class="tokens-div">Usage costs: <u>$${usageCosts}</u> (${usageCostsStrBreakdown})</div>`
-  if ($('.tokens-div').length) {
-    $('.tokens-div').replaceWith(usageCostsElement);
-  } else {
-    $('.pg-header-section.pg-header-title').append(usageCostsElement);
-  }
-
-  checkMaxTokensError(promptTokensSize + responseLen);
+  const usageCostsElement = `Usage costs: <u>$${usageCosts}</u> (${usageCostsStrBreakdown})`
+  changeContent(usageCostsElement);
+  checkMaxTokensWarning(promptTokensSize + responseLen);
 }
 
-function checkMaxTokensError(promptTokensSize) {
+function countWords() {
+  const engineName = $('.engine-select').find('[class$="singleValue"]')[0].textContent;
+  if (!isKnownEngine(engineName)) {
+    changeContent(`Unknown engine <u>${engineName}</u>`);
+  } else {
+    if (freeEngines.includes(engineName)) {
+      changeContent(`<u>${engineName}</u> is currently free to use🎉`);
+    } else {
+      updateTokensUsage(engineName);
+    }
+  }
+}
+
+function checkMaxTokensWarning(promptTokensSize) {
   const elementAlreadyExist = $('.exceeded-prompts-error-msg').length;
   if (promptTokensSize > maxTokenSize) {
     const exceededTokensMsg = `<div class="exceeded-prompts-error-msg"><b>Prompt exceeds maximum of ${maxTokenSize} tokens (${Math.ceil(Math.abs(maxTokenSize - promptTokensSize))} too much)</b></div>`

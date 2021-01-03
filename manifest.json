@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "TokenAware",
   "description": "Dynamically count tokens and visualize your spend in OpenAI's Playground. 100% client side and secure. For feedback: saharmor.info",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "browser_action": {
     "default_icon": "icon/favicon.ico"
   },
