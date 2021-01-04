@@ -47,7 +47,7 @@ function countWords() {
     changeContent(`Unknown engine <u>${engineName}</u>`);
   } else {
     if (freeEngines.includes(engineName)) {
-      changeContent(`<u>${engineName}</u> is currently free to use🎉`);
+      changeContent(`<u>${engineName}</u> is currently free to use 🎉`);
     } else {
       updateTokensUsage(engineName);
     }
