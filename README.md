@@ -1,5 +1,5 @@
 # TokenAware
-A Chrome extension to count tokens within OpenAI's GPT-3 Playground
+A [Chrome extension](https://chrome.google.com/webstore/detail/tokenaware/ngcligbdheofopbokngenlgdpalociaf) to count tokens within OpenAI's GPT-3 Playground
 It's 100% client-side so no data is being sent to any server.
 
 The token calculation is an estimate, based on the assumption that 1 token equals 4 characters.
